@@ -47,6 +47,22 @@ def generate_password():
     password = ''.join(random.choice(characters) for _ in range(length))
     password_var.set(password)
 
+def set_strength(strength):
+    if strength == "easy":
+        length_var.set(8)
+        letters_var.set(True)
+        numbers_var.set(False)
+        symbols_var.set(False)
+    elif strength == "intermediate":
+        length_var.set(12)
+        letters_var.set(True)
+        numbers_var.set(True)
+        symbols_var.set(False)
+    elif strength == "advanced":
+        length_var.set(16)
+        letters_var.set(True)
+        numbers_var.set(True)
+        symbols_var.set(True)
 
 def copy_to_clipboard():
     password = password_var.get()
@@ -77,6 +93,14 @@ tk.Spinbox(root, from_=4, to=50, textvariable=length_var, width=5).pack()
 tk.Checkbutton(root, text="Include Letters (A-Z, a-z)", variable=letters_var, bg="#f0f0f0").pack(anchor="w", padx=50)
 tk.Checkbutton(root, text="Include Numbers (0-9)", variable=numbers_var, bg="#f0f0f0").pack(anchor="w", padx=50)
 tk.Checkbutton(root, text="Include Symbols (!@#$)", variable=symbols_var, bg="#f0f0f0").pack(anchor="w", padx=50)
+
+strength_frame = tk.Frame(root, bg="#f0f0f0")
+strength_frame.pack(pady=5)
+tk.Label(strength_frame, text="Quick Select:", bg="#f0f0f0", font=("Arial", 10)).pack(side="left", padx=5)
+tk.Button(strength_frame, text="Easy", command=lambda: set_strength("easy"), bg="#8BC34A", fg="white").pack(side="left", padx=5)
+tk.Button(strength_frame, text="Intermediate", command=lambda: set_strength("intermediate"), bg="#FFC107", fg="white").pack(side="left", padx=5)
+tk.Button(strength_frame, text="Advanced", command=lambda: set_strength("advanced"), bg="#F44336", fg="white").pack(side="left", padx=5)
+
 
 tk.Button(root, text="Generate Password", command=generate_password, bg="#4CAF50", fg="white", font=("Arial", 10, "bold")).pack(pady=10)
 
