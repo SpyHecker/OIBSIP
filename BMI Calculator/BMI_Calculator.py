@@ -22,6 +22,7 @@
 # 8. User Experience (for Advanced): Ensure a responsive and user-friendly GUI with clear
 # instructions and feedback.
 
+#importing all necessary libraries
 import tkinter as tk
 from tkinter import messagebox, simpledialog
 import sqlite3
@@ -31,6 +32,7 @@ import matplotlib.pyplot as plt
 # Database setup
 DB_FILE = "BMI Calculator\Bmi_data.db"
 
+#Initialize DataBase and create tables if not exist
 def init_db():
     conn = sqlite3.connect(DB_FILE)
     c = conn.cursor()
@@ -81,7 +83,7 @@ def add_user():
         except sqlite3.IntegrityError:
             messagebox.showinfo("Duplicate User", f"User '{new_user}' already exists.")
 
-# Save BMI record to DB
+# Save BMI record to Database
 def save_record(user, weight, height, bmi, category):
     conn = sqlite3.connect(DB_FILE)
     c = conn.cursor()
