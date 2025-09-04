@@ -25,64 +25,58 @@
 
 import speech_recognition as sr
 import pyttsx3
+import datetime
 import webbrowser
 
-recognizer = sr.Recognizer()
-tts_engine = pyttsx3.init()
+# Initialize the speech engine
+engine = pyttsx3.init()
 
 def speak(text):
     print(f"Assistant: {text}")
-    tts_engine.say(text)
-    tts_engine.runAndWait()
-
-def open_website(site_name):
-    sites = {
-        "youtube": "https://www.youtube.com",
-        "gmail": "https://mail.google.com",
-        "google": "https://www.google.com",
-        "drive": "https://drive.google.com",
-        "maps": "https://maps.google.com"
-    }
-    url = sites.get(site_name.lower())
-    if url:
-        speak(f"Opening {site_name}")
-        webbrowser.open(url)
-    else:
-        speak("Sorry, I don't know that site.")
+    engine.say(text)
+    engine.runAndWait()
 
 def listen():
+    r = sr.Recognizer()
     with sr.Microphone() as source:
         print("Listening...")
-        recognizer.adjust_for_ambient_noise(source, duration=0.5) # Better accuracy
-        audio = recognizer.listen(source)
+        audio = r.listen(source)
         try:
-            command = recognizer.recognize_google(audio)
-            print(f"You said: {command}")
-            speak(f"You said: {command}")
-            return command.lower()
-        except sr.UnknownValueError:
-            speak("Sorry, I couldn't understand.")
+            query = r.recognize_google(audio)
+            print(f"User: {query}")
+            return query.lower()
+        except Exception:
+            speak("Sorry, I did not catch that.")
             return ""
-        except sr.RequestError:
-            speak("Service is down.")
-            return ""
+
+def get_time():
+    return datetime.datetime.now().strftime("%I:%M %p")
+
+def get_date():
+    return datetime.datetime.now().strftime("%A, %d %B %Y")
+
+def main():
+    speak("Hello! I am your voice assistant.")
+    while True:
+        command = listen()
+        if "hello" in command:
+            speak("Hello! How can I help you?")
+        elif "time" in command:
+            speak(f"The current time is {get_time()}")
+        elif "date" in command:
+            speak(f"Today is {get_date()}")
+        elif "search" in command:
+            speak("What should I search for?")
+            query = listen()
+            if query:
+                url = "https://www.google.com/search?q=" + query
+                speak(f"Here are results for {query}")
+                webbrowser.open(url)
+        elif "exit" in command or "stop" in command or "bye" in command:
+            speak("Goodbye! Have a great day.")
+            break
+        elif command.strip() != "":
+            speak("Sorry, I can only tell you the time, date, or search the web right now.")
 
 if __name__ == "__main__":
-    while True:
-        result = listen()
-        # Check for open website commands
-        if "open youtube" in result:
-            open_website("youtube")
-        elif "open gmail" in result:
-            open_website("gmail")
-        elif "open google" in result:
-            open_website("google")
-        elif "open drive" in result:
-            open_website("drive")
-        elif "open maps" in result:
-            open_website("maps")
-        elif result in ["exit", "bye"]:
-            speak("Goodbye!")
-            break
-
-
+    main()
